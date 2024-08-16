@@ -39,6 +39,8 @@ final class CarouselViewController: UIViewController {
     
     /// Duration of each segment's animation
     private let duration: TimeInterval = 3.0
+    /// progress bar height
+    private let progressBarHeight: CGFloat = 5.0
     
     /// Current item index
     private var currentItemIndex: Int = 0 {
@@ -136,7 +138,7 @@ final class CarouselViewController: UIViewController {
             segmentedProgressBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             segmentedProgressBar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             segmentedProgressBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            segmentedProgressBar.heightAnchor.constraint(equalToConstant: 5)
+            segmentedProgressBar.heightAnchor.constraint(equalToConstant: progressBarHeight)
         ])
         view.bringSubviewToFront(segmentedProgressBar)
     }
