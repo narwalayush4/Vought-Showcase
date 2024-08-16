@@ -24,6 +24,22 @@ final class CarouselViewController: UIViewController {
     /// Carousel items
     private var items: [CarouselItem] = []
     
+    private let images: [UIImage] = CarouselItemDataSourceProvider.getImages()
+    
+    /// Image View showing the image
+    private lazy var imageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.contentMode = .scaleAspectFill
+        return imageView
+    }()
+    
+    /// Top Progress Bar View
+    private var segmentedProgressBar: SegmentedProgressBar
+    
+    /// Duration of each segment's animation
+    private let duration: TimeInterval = 1.0
+    
     /// Current item index
     private var currentItemIndex: Int = 0 {
         didSet {
@@ -36,6 +52,7 @@ final class CarouselViewController: UIViewController {
     /// - Parameter items: Carousel items
     public init(items: [CarouselItem]) {
         self.items = items
+        self.segmentedProgressBar = SegmentedProgressBar(numberOfSegments: self.images.count, duration: duration)
         super.init(nibName: "CarouselViewController", bundle: nil)
     }
     
@@ -46,8 +63,16 @@ final class CarouselViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        initPageViewController()
-        initCarouselControl()
+//        initPageViewController()
+//        initCarouselControl()
+        initImageViewControllers()
+        initProgressBar()
+        setupTapGestures()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        segmentedProgressBar.startAnimation()
     }
     
     
@@ -88,6 +113,37 @@ final class CarouselViewController: UIViewController {
                     self,
                     action: #selector(updateCurrentPage(sender:)),
                     for: .valueChanged)
+    }
+    
+    /// Initialize Image View Controllers
+    private func initImageViewControllers() {
+        view.addSubview(imageView)
+        NSLayoutConstraint.activate([
+            imageView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            imageView.topAnchor.constraint(equalTo: view.topAnchor),
+            imageView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            imageView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
+        imageView.image = images[currentItemIndex]
+    }
+    
+    /// Initialize progress bar
+    private func initProgressBar() {
+        segmentedProgressBar.delegate = self
+        view.addSubview(segmentedProgressBar)
+        segmentedProgressBar.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            segmentedProgressBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            segmentedProgressBar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            segmentedProgressBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            segmentedProgressBar.heightAnchor.constraint(equalToConstant: 5)
+        ])
+        view.bringSubviewToFront(segmentedProgressBar)
+    }
+    
+    /// Handle Tap Gestures
+    private func setupTapGestures() {
+        
     }
 
     /// Update current page
@@ -175,4 +231,18 @@ extension CarouselViewController: UIPageViewControllerDelegate {
                 currentItemIndex = index
             }
         }
+}
+
+// MARK: SegmentedProgressBarDelegate methods
+extension CarouselViewController : SegmentedProgressBarDelegate {
+    
+    func segmentedProgressBarChangedIndex(index: Int) {
+        imageView.image = images[index]
+    }
+    
+    func segmentedProgressBarFinished() {
+        willMove(toParent: nil)
+        view.removeFromSuperview()
+        removeFromParent()
+    }
 }

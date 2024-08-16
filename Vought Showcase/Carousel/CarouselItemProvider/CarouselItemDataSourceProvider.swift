@@ -5,7 +5,7 @@
 //  Created by Burhanuddin Rampurawala on 06/08/24.
 //
 
-import Foundation
+import UIKit
 
 class CarouselItemDataSourceProvider: CarouselItemDataSourceProviderType {
     func items() -> [CarouselItem] {
@@ -15,5 +15,16 @@ class CarouselItemDataSourceProvider: CarouselItemDataSourceProviderType {
             BlackNoirCarouselItem(),
             ATrainCarouselItem(),
         ]
+    }
+    
+    static func getImages() -> [UIImage] {
+        let names = ["butcher", "frenchie", "hughei", "mm"]
+        var arr: [UIImage] = []
+        for idx in 0..<4 {
+            if let image = UIImage(named: names[idx]) {
+                arr.append(image)
+            }
+        }
+        return arr
     }
 }
