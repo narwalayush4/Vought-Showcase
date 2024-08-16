@@ -38,7 +38,7 @@ final class CarouselViewController: UIViewController {
     private var segmentedProgressBar: SegmentedProgressBar
     
     /// Duration of each segment's animation
-    private let duration: TimeInterval = 1.0
+    private let duration: TimeInterval = 3.0
     
     /// Current item index
     private var currentItemIndex: Int = 0 {
@@ -143,7 +143,31 @@ final class CarouselViewController: UIViewController {
     
     /// Handle Tap Gestures
     private func setupTapGestures() {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
+        view.addGestureRecognizer(tapGesture)
         
+        let swipeDownGesture = UISwipeGestureRecognizer(target: self, action: #selector(handleSwipeDown(_:)))
+        swipeDownGesture.direction = .down
+        view.addGestureRecognizer(swipeDownGesture)
+    }
+    
+    @objc func handleTap(_ gesture: UITapGestureRecognizer) {
+        let location = gesture.location(in: view)
+        let screenWidth = view.bounds.width
+
+        if location.x < screenWidth / 2 {
+            segmentedProgressBar.rewind()
+        } else {
+            segmentedProgressBar.skip()
+        }
+    }
+    
+    @objc func handleSwipeDown(_ gesture: UISwipeGestureRecognizer) {
+        if gesture.direction == .down {
+            willMove(toParent: nil)
+            view.removeFromSuperview()
+            removeFromParent()
+        }
     }
 
     /// Update current page
